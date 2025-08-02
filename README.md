@@ -9,7 +9,7 @@ A simple GUI tool for batch image resizing, built with Rust.
 - **Preset sizes**: Common social media and web dimensions
 - **Custom dimensions**: Set your own width and height  
 - **Aspect ratio control**: Maintain or ignore original proportions
-- **Cross-platform**: Windows, macOS, and Linux
+- **Cross-platform**: Windows and Linux
 
 ## Installation
 
