@@ -63,7 +63,7 @@ jobs:
   release:
     name: Release
     runs-on: ${{ matrix.os }}
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
     needs: test
     strategy:
       matrix:
@@ -107,7 +107,7 @@ jobs:
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
     needs: release
 
     steps:
@@ -120,14 +120,16 @@ jobs:
           files: |
             resize-rs-linux-x64/resize-rs-linux-x64
             resize-rs-windows-x64.exe/resize-rs-windows-x64.exe
+          name: ${{ inputs.release_version != '' && inputs.release_version || github.ref_name }}
+          tag_name: ${{ inputs.release_version != '' && inputs.release_version || github.ref_name }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  manual_release:
-    name: Manual Release (Create Tag & Release)
+  create_tag:
+    name: Create Tag (Manual Release)
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && inputs.create_release
+    if: github.event_name == 'workflow_dispatch' && inputs.create_release && inputs.release_version != ''
     needs: test
 
     steps:
