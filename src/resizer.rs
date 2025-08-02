@@ -33,7 +33,7 @@ impl ImageResizer {
         };
 
         // Determine output format from preset or file extension
-        let format = Self::get_output_format(&preset.output_format, input_path)?;
+        let format = Self::get_output_format(preset.output_format, input_path)?;
 
         // Save the resized image with appropriate quality settings
         Self::save_image_with_format(&resized_img, output_path, format)?;
@@ -81,7 +81,7 @@ impl ImageResizer {
         }
     }
 
-    fn get_output_format(output_format: &OutputFormat, input_path: &Path) -> Result<ImageFormat> {
+    fn get_output_format(output_format: OutputFormat, input_path: &Path) -> Result<ImageFormat> {
         match output_format {
             OutputFormat::KeepOriginal => Self::get_image_format(input_path),
             OutputFormat::Jpeg => Ok(ImageFormat::Jpeg),
@@ -120,18 +120,18 @@ impl ImageResizer {
         Ok(())
     }
 
-    fn get_extension_for_format(output_format: &OutputFormat, input_path: &Path) -> Result<String> {
+    fn get_extension_for_format(output_format: OutputFormat, input_path: &Path) -> String {
         match output_format {
-            OutputFormat::KeepOriginal => Ok(input_path
+            OutputFormat::KeepOriginal => input_path
                 .extension()
                 .unwrap_or_default()
                 .to_string_lossy()
-                .to_string()),
-            OutputFormat::Jpeg => Ok("jpg".to_string()),
-            OutputFormat::Png => Ok("png".to_string()),
-            OutputFormat::Webp => Ok("webp".to_string()),
-            OutputFormat::Bmp => Ok("bmp".to_string()),
-            OutputFormat::Tiff => Ok("tiff".to_string()),
+                .to_string(),
+            OutputFormat::Jpeg => "jpg".to_string(),
+            OutputFormat::Png => "png".to_string(),
+            OutputFormat::Webp => "webp".to_string(),
+            OutputFormat::Bmp => "bmp".to_string(),
+            OutputFormat::Tiff => "tiff".to_string(),
         }
     }
 
@@ -153,8 +153,7 @@ impl ImageResizer {
             let _file_name = input_path.file_name().context("Invalid file name")?;
 
             // Determine output extension based on format
-            let output_extension =
-                Self::get_extension_for_format(&preset.output_format, input_path)?;
+            let output_extension = Self::get_extension_for_format(preset.output_format, input_path);
 
             let output_path = output_dir.join(format!(
                 "{}_resized_{}x{}.{}",
