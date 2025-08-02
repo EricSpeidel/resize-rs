@@ -1,143 +1,39 @@
-# Image Resizer (resize-rs)
+# resize-rs
 
-A simple, fast image resizer with a graphical user interface built in Rust.
+A simple GUI tool for batch image resizing, built with Rust.
 
 ## Features
 
-- **Multiple Format Support**: JPG, PNG, GIF, BMP, TIFF, WebP
-- **Preset Sizes**: Common social media and web formats
-- **Custom Dimensions**: Set your own width and height
-- **Aspect Ratio**: Option to maintain or ignore aspect ratios
-- **Batch Processing**: Resize multiple images at once
-- **Cross-platform**: Works on Windows, macOS, and Linux
-- **Fast**: Built with Rust for optimal performance
-
-## Development
-
-### Quality Assurance
-
-This project uses comprehensive quality tools:
-
-- **Formatting**: `rustfmt` for consistent code style
-- **Linting**: `clippy` with pedantic rules for code quality
-- **Security**: `cargo audit` for vulnerability scanning
-- **Testing**: Unit tests with `cargo test`
-
-#### Quick Commands
-
-```bash
-# Install development tools
-just install-tools
-
-# Run all quality checks
-just check-all
-
-# Individual checks
-just format      # Format code
-just lint        # Run clippy
-just test        # Run tests
-just audit       # Security audit
-```
-
-## Presets Included
-
-- Instagram Square (1080x1080)
-- Instagram Story (1080x1920)
-- Facebook Cover (820x312)
-- Twitter Header (1500x500)
-- YouTube Thumbnail (1280x720)
-- HD 1080p (1920x1080)
-- HD 720p (1280x720)
-- Small Web (800x600)
-- Thumbnail (150x150)
+- **Batch processing**: Resize multiple images at once
+- **Multiple formats**: JPG, PNG, WebP, BMP, TIFF
+- **Preset sizes**: Common social media and web dimensions
+- **Custom dimensions**: Set your own width and height  
+- **Aspect ratio control**: Maintain or ignore original proportions
+- **Cross-platform**: Windows, macOS, and Linux
 
 ## Installation
 
-### Prerequisites
+### Download Release
+Download the latest release for your platform from the [Releases page](https://github.com/EricSpeidel/resize-rs/releases).
 
-- Rust (latest stable version)
-- Cargo
-
-### Building from Source
-
-1. Clone the repository:
+### Build from Source
 ```bash
-git clone <repository-url>
+git clone https://github.com/EricSpeidel/resize-rs.git
 cd resize-rs
-```
-
-2. Build the project:
-```bash
 cargo build --release
-```
-
-3. Run the application:
-```bash
-cargo run --release
 ```
 
 ## Usage
 
-1. **Select Images**: Click "Select Images" to choose one or more image files
-2. **Choose Output Directory**: Click "Select Output Directory" to set where resized images will be saved
-3. **Select Size**:
-   - Choose from presets for common formats
-   - Or use custom dimensions with optional aspect ratio maintenance
-4. **Process**: Click "Start Processing" to resize all selected images
+1. Click **"Select Images"** to choose your image files
+2. Click **"Select Output Directory"** to set the destination folder
+3. Choose a preset size or enter custom dimensions
+4. Click **"Start Processing"** to resize all images
 
-The resized images will be saved with a `_resized_WxH` suffix in the filename.
+Resized images are saved with a `_resized_WxH` suffix.
 
-## Technical Details
-
-### Dependencies
-
-- **eframe/egui**: Modern, cross-platform GUI framework
-- **image**: Pure Rust image processing library
-- **rfd**: Cross-platform file dialogs
-- **tokio**: Async runtime for non-blocking operations
-- **anyhow**: Error handling
-- **serde**: Serialization for settings
-
-### Architecture
-
-- `main.rs`: Application entry point
-- `app.rs`: Main GUI application logic
-- `resizer.rs`: Image processing functionality
-- `presets.rs`: Predefined resize configurations
-
-## Development
-
-### Running in Development Mode
-
-```bash
-cargo run
-```
-
-### Building for Release
-
-```bash
-cargo build --release
-```
-
-The optimized binary will be available in `target/release/`.
-
-### Adding New Presets
-
-Edit `src/presets.rs` and add new entries to the `PRESETS` array:
-
-```rust
-ResizePreset {
-    name: "Custom Format",
-    width: 1234,
-    height: 5678,
-    maintain_aspect_ratio: true,
-},
-```
+Comes with preconfigured presets for common social media and web formats, or use custom dimensions.
 
 ## License
 
-This project is open source. See LICENSE file for details.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues.
+MIT License - see [LICENSE](LICENSE) file for details.

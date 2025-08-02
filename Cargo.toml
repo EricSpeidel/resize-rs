@@ -2,11 +2,11 @@
 name = "resize-rs"
 version = "0.1.0"
 edition = "2021"
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/username/resize-rs"
-keywords = ["image", "resize", "gui", "egui", "tool"]
+license = "MIT"
+repository = "https://github.com/EricSpeidel/resize-rs"
+keywords = ["image", "resize", "gui", "tool"]
 categories = ["multimedia::images", "gui"]
-description = "A simple GUI application for batch image resizing with multiple format support"
+description = "A simple GUI tool for batch image resizing"
 authors = ["Eric Speidel <eric@ericspeidel.de>"]
 
 [dependencies]
