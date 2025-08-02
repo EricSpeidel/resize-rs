@@ -6,6 +6,17 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create a release'
+        required: false
+        default: false
+        type: boolean
+      release_version:
+        description: 'Release version (e.g., v1.0.3)'
+        required: false
+        default: ''
+        type: string
 
 env:
   CARGO_TERM_COLOR: always
@@ -50,7 +61,7 @@ jobs:
   release:
     name: Release
     runs-on: ${{ matrix.os }}
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
     needs: test
     strategy:
       matrix:
@@ -94,7 +105,7 @@ jobs:
   create_release:
     name: Create Release
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
     needs: release
     
     steps:
@@ -104,6 +115,8 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: ${{ inputs.release_version || github.ref_name }}
+        name: ${{ inputs.release_version || github.ref_name }}
         files: |
           resize-rs-linux-x64/resize-rs-linux-x64
           resize-rs-windows-x64.exe/resize-rs-windows-x64.exe
