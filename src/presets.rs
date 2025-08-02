@@ -11,6 +11,18 @@ pub struct ResizePreset {
 impl ResizePreset {
     pub const PRESETS: &'static [Self] = &[
         Self {
+            name: "340×570",
+            width: 340,
+            height: 570,
+            maintain_aspect_ratio: false,
+        },
+        Self {
+            name: "1040×570",
+            width: 1040,
+            height: 570,
+            maintain_aspect_ratio: false,
+        },
+        Self {
             name: "Instagram Square",
             width: 1080,
             height: 1080,
