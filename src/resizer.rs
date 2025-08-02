@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use image::{DynamicImage, GenericImageView, ImageFormat};
 use std::path::{Path, PathBuf};
 
-use crate::presets::ResizePreset;
+use crate::presets::{OutputFormat, ResizePreset};
 
 pub struct ImageResizer;
 
@@ -32,13 +32,11 @@ impl ImageResizer {
             img.resize_exact(new_width, new_height, image::imageops::FilterType::Lanczos3)
         };
 
-        // Determine output format from file extension
-        let format = Self::get_image_format(output_path)?;
+        // Determine output format from preset or file extension
+        let format = Self::get_output_format(&preset.output_format, input_path)?;
 
-        // Save the resized image
-        resized_img
-            .save_with_format(output_path, format)
-            .with_context(|| format!("Failed to save image: {}", output_path.display()))?;
+        // Save the resized image with appropriate quality settings
+        Self::save_image_with_format(&resized_img, output_path, format)?;
 
         Ok(())
     }
@@ -51,18 +49,17 @@ impl ImageResizer {
         let (original_width, original_height) = img.dimensions();
         let original_aspect_ratio = f64::from(original_width) / f64::from(original_height);
 
-        // Calculate dimensions based on both target width and height
-        // Use ceiling to prevent rounding down to values below target dimensions
-        let height_from_width = (f64::from(target_width) / original_aspect_ratio).ceil() as u32;
-        let width_from_height = (f64::from(target_height) * original_aspect_ratio).ceil() as u32;
-
-        // Determine which dimension to prioritize to ensure the smaller side matches exactly
-        if width_from_height <= target_width {
-            // Height constraint is more restrictive, use exact target height
-            (width_from_height, target_height)
+        // Always set the smaller side to the target, and calculate the other to preserve aspect ratio
+        if target_width <= target_height {
+            // Width is the smaller side
+            let width = target_width;
+            let height = (f64::from(width) / original_aspect_ratio).round() as u32;
+            (width, height)
         } else {
-            // Width constraint is more restrictive, use exact target width
-            (target_width, height_from_width)
+            // Height is the smaller side
+            let height = target_height;
+            let width = (f64::from(height) * original_aspect_ratio).round() as u32;
+            (width, height)
         }
     }
 
@@ -84,6 +81,60 @@ impl ImageResizer {
         }
     }
 
+    fn get_output_format(output_format: &OutputFormat, input_path: &Path) -> Result<ImageFormat> {
+        match output_format {
+            OutputFormat::KeepOriginal => Self::get_image_format(input_path),
+            OutputFormat::Jpeg => Ok(ImageFormat::Jpeg),
+            OutputFormat::Png => Ok(ImageFormat::Png),
+            OutputFormat::Webp => Ok(ImageFormat::WebP),
+            OutputFormat::Bmp => Ok(ImageFormat::Bmp),
+            OutputFormat::Tiff => Ok(ImageFormat::Tiff),
+        }
+    }
+
+    fn save_image_with_format(
+        img: &DynamicImage,
+        output_path: &Path,
+        format: ImageFormat,
+    ) -> Result<()> {
+        match format {
+            ImageFormat::Jpeg => {
+                // Save JPEG with maximum quality (100)
+                use image::codecs::jpeg::JpegEncoder;
+                use std::fs::File;
+
+                let file = File::create(output_path).with_context(|| {
+                    format!("Failed to create output file: {}", output_path.display())
+                })?;
+                let mut encoder = JpegEncoder::new_with_quality(file, 100);
+                encoder
+                    .encode_image(img)
+                    .with_context(|| format!("Failed to encode JPEG: {}", output_path.display()))?;
+            }
+            _ => {
+                // For all other formats, use the standard save method
+                img.save_with_format(output_path, format)
+                    .with_context(|| format!("Failed to save image: {}", output_path.display()))?;
+            }
+        }
+        Ok(())
+    }
+
+    fn get_extension_for_format(output_format: &OutputFormat, input_path: &Path) -> Result<String> {
+        match output_format {
+            OutputFormat::KeepOriginal => Ok(input_path
+                .extension()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .to_string()),
+            OutputFormat::Jpeg => Ok("jpg".to_string()),
+            OutputFormat::Png => Ok("png".to_string()),
+            OutputFormat::Webp => Ok("webp".to_string()),
+            OutputFormat::Bmp => Ok("bmp".to_string()),
+            OutputFormat::Tiff => Ok("tiff".to_string()),
+        }
+    }
+
     pub fn get_supported_extensions() -> Vec<&'static str> {
         vec!["jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "webp"]
     }
@@ -101,12 +152,16 @@ impl ImageResizer {
 
             let _file_name = input_path.file_name().context("Invalid file name")?;
 
+            // Determine output extension based on format
+            let output_extension =
+                Self::get_extension_for_format(&preset.output_format, input_path)?;
+
             let output_path = output_dir.join(format!(
                 "{}_resized_{}x{}.{}",
                 input_path.file_stem().unwrap().to_string_lossy(),
                 preset.width,
                 preset.height,
-                input_path.extension().unwrap().to_string_lossy()
+                output_extension
             ));
 
             let result = Self::resize_image(input_path, &output_path, preset).map(|()| output_path);

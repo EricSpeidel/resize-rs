@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use std::sync::mpsc;
 use std::thread;
 
-use crate::presets::ResizePreset;
+use crate::presets::{OutputFormat, ResizePreset};
 use crate::resizer::ImageResizer;
 
 #[derive(Debug)]
@@ -22,6 +22,7 @@ pub struct ImageResizerApp {
     custom_width: String,
     custom_height: String,
     maintain_aspect_ratio: bool,
+    custom_output_format: OutputFormat,
     use_custom_size: bool,
     processing_status: ProcessingStatus,
     processing_receiver: Option<mpsc::Receiver<ProcessingStatus>>,
@@ -43,6 +44,7 @@ impl ImageResizerApp {
             custom_width: "800".to_string(),
             custom_height: "600".to_string(),
             maintain_aspect_ratio: true,
+            custom_output_format: OutputFormat::KeepOriginal,
             use_custom_size: false,
             processing_status: ProcessingStatus::Idle,
             processing_receiver: None,
@@ -99,6 +101,7 @@ impl ImageResizerApp {
                 width,
                 height,
                 maintain_aspect_ratio: self.maintain_aspect_ratio,
+                output_format: self.custom_output_format,
             }
         } else {
             self.selected_preset
@@ -226,6 +229,51 @@ impl eframe::App for ImageResizerApp {
                 });
 
                 ui.checkbox(&mut self.maintain_aspect_ratio, "Maintain aspect ratio");
+
+                ui.horizontal(|ui| {
+                    ui.label("Output Format:");
+                    egui::ComboBox::from_label("")
+                        .selected_text(match self.custom_output_format {
+                            OutputFormat::KeepOriginal => "Keep Original",
+                            OutputFormat::Jpeg => "JPEG",
+                            OutputFormat::Png => "PNG",
+                            OutputFormat::Webp => "WebP",
+                            OutputFormat::Bmp => "BMP",
+                            OutputFormat::Tiff => "TIFF",
+                        })
+                        .show_ui(ui, |ui| {
+                            ui.selectable_value(
+                                &mut self.custom_output_format,
+                                OutputFormat::KeepOriginal,
+                                "Keep Original",
+                            );
+                            ui.selectable_value(
+                                &mut self.custom_output_format,
+                                OutputFormat::Jpeg,
+                                "JPEG",
+                            );
+                            ui.selectable_value(
+                                &mut self.custom_output_format,
+                                OutputFormat::Png,
+                                "PNG",
+                            );
+                            ui.selectable_value(
+                                &mut self.custom_output_format,
+                                OutputFormat::Webp,
+                                "WebP",
+                            );
+                            ui.selectable_value(
+                                &mut self.custom_output_format,
+                                OutputFormat::Bmp,
+                                "BMP",
+                            );
+                            ui.selectable_value(
+                                &mut self.custom_output_format,
+                                OutputFormat::Tiff,
+                                "TIFF",
+                            );
+                        });
+                });
             } else {
                 ui.horizontal(|ui| {
                     ui.label("Preset:");
