@@ -1,0 +1,54 @@
+[package]
+name = "resize-rs"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/username/resize-rs"
+keywords = ["image", "resize", "gui", "egui", "tool"]
+categories = ["multimedia::images", "gui"]
+description = "A simple GUI application for batch image resizing with multiple format support"
+authors = ["Eric Speidel <eric@ericspeidel.de>"]
+
+[dependencies]
+eframe = "0.28"
+image = { version = "0.25", features = ["png", "jpeg", "webp", "bmp", "tiff"] }
+rfd = "0.14"
+anyhow = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+
+[[bin]]
+name = "resize-rs"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+debug = true
+
+# Linting configuration
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+unused_crate_dependencies = "warn"
+
+[lints.clippy]
+# Enable all clippy lints and then selectively allow some
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+
+# Allow some pedantic lints that are too noisy
+module_name_repetitions = "allow"
+similar_names = "allow"
+too_many_lines = "allow"
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+multiple_crate_versions = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"

@@ -1,0 +1,26 @@
+# Ignore build artifacts
+/target/
+/images/
+/examples/
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.iml
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# Ignore logs
+*.log
+
+# Ignore distribution files
+/dist/
+/build/
