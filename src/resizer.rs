@@ -50,13 +50,13 @@ impl ImageResizer {
     ) -> (u32, u32) {
         let (original_width, original_height) = img.dimensions();
 
-        let width_ratio = max_width as f64 / original_width as f64;
-        let height_ratio = max_height as f64 / original_height as f64;
+        let width_ratio = f64::from(max_width) / f64::from(original_width);
+        let height_ratio = f64::from(max_height) / f64::from(original_height);
 
         let ratio = width_ratio.min(height_ratio);
 
-        let new_width = (original_width as f64 * ratio) as u32;
-        let new_height = (original_height as f64 * ratio) as u32;
+        let new_width = (f64::from(original_width) * ratio) as u32;
+        let new_height = (f64::from(original_height) * ratio) as u32;
 
         (new_width, new_height)
     }

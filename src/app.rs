@@ -217,7 +217,16 @@ impl eframe::App for ImageResizerApp {
                 ui.radio_value(&mut self.use_custom_size, true, "Custom Size");
             });
 
-            if !self.use_custom_size {
+            if self.use_custom_size {
+                ui.horizontal(|ui| {
+                    ui.label("Width:");
+                    ui.text_edit_singleline(&mut self.custom_width);
+                    ui.label("Height:");
+                    ui.text_edit_singleline(&mut self.custom_height);
+                });
+
+                ui.checkbox(&mut self.maintain_aspect_ratio, "Maintain aspect ratio");
+            } else {
                 ui.horizontal(|ui| {
                     ui.label("Preset:");
                     egui::ComboBox::from_label("")
@@ -243,15 +252,6 @@ impl eframe::App for ImageResizerApp {
                         "ignored"
                     }
                 ));
-            } else {
-                ui.horizontal(|ui| {
-                    ui.label("Width:");
-                    ui.text_edit_singleline(&mut self.custom_width);
-                    ui.label("Height:");
-                    ui.text_edit_singleline(&mut self.custom_height);
-                });
-
-                ui.checkbox(&mut self.maintain_aspect_ratio, "Maintain aspect ratio");
             }
 
             ui.separator();
