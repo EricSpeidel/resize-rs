@@ -14,13 +14,13 @@ impl ResizePreset {
             name: "340×570",
             width: 340,
             height: 570,
-            maintain_aspect_ratio: false,
+            maintain_aspect_ratio: true,
         },
         Self {
             name: "1040×570",
             width: 1040,
             height: 570,
-            maintain_aspect_ratio: false,
+            maintain_aspect_ratio: true,
         },
         Self {
             name: "Instagram Square",

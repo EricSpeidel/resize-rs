@@ -45,20 +45,25 @@ impl ImageResizer {
 
     fn calculate_aspect_ratio_size(
         img: &DynamicImage,
-        max_width: u32,
-        max_height: u32,
+        target_width: u32,
+        target_height: u32,
     ) -> (u32, u32) {
         let (original_width, original_height) = img.dimensions();
-
-        let width_ratio = f64::from(max_width) / f64::from(original_width);
-        let height_ratio = f64::from(max_height) / f64::from(original_height);
-
-        let ratio = width_ratio.min(height_ratio);
-
-        let new_width = (f64::from(original_width) * ratio) as u32;
-        let new_height = (f64::from(original_height) * ratio) as u32;
-
-        (new_width, new_height)
+        let original_aspect_ratio = f64::from(original_width) / f64::from(original_height);
+        
+        // Calculate dimensions based on both target width and height
+        // Use ceiling to prevent rounding down to values below target dimensions
+        let height_from_width = (f64::from(target_width) / original_aspect_ratio).ceil() as u32;
+        let width_from_height = (f64::from(target_height) * original_aspect_ratio).ceil() as u32;
+        
+        // Determine which dimension to prioritize to ensure the smaller side matches exactly
+        if width_from_height <= target_width {
+            // Height constraint is more restrictive, use exact target height
+            (width_from_height, target_height)
+        } else {
+            // Width constraint is more restrictive, use exact target width
+            (target_width, height_from_width)
+        }
     }
 
     fn get_image_format(path: &Path) -> Result<ImageFormat> {
