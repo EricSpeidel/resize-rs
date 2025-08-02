@@ -1,13 +1,13 @@
 [package]
 name = "resize-rs"
-version = "0.1.0"
+version = "1.0.1"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/EricSpeidel/resize-rs"
 keywords = ["image", "resize", "gui", "tool"]
 categories = ["multimedia::images", "gui"]
 description = "A simple GUI tool for batch image resizing"
-authors = ["Eric Speidel <eric@ericspeidel.de>"]
+authors = ["Eric Speidel"]
 
 [dependencies]
 eframe = "0.28"
