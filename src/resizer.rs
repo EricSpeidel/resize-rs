@@ -50,12 +50,12 @@ impl ImageResizer {
     ) -> (u32, u32) {
         let (original_width, original_height) = img.dimensions();
         let original_aspect_ratio = f64::from(original_width) / f64::from(original_height);
-        
+
         // Calculate dimensions based on both target width and height
         // Use ceiling to prevent rounding down to values below target dimensions
         let height_from_width = (f64::from(target_width) / original_aspect_ratio).ceil() as u32;
         let width_from_height = (f64::from(target_height) * original_aspect_ratio).ceil() as u32;
-        
+
         // Determine which dimension to prioritize to ensure the smaller side matches exactly
         if width_from_height <= target_width {
             // Height constraint is more restrictive, use exact target height
