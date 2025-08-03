@@ -1,6 +1,7 @@
 # resize-rs
 
 A simple GUI tool for batch image resizing, built with Rust.
+Learning project.
 
 ## Features
 
